@@ -1,0 +1,24 @@
+#!/sbin/openrc-run
+
+name="happd"
+description="Happ Proxy Client Service (happd)"
+
+# Путь к исполняемому файлу демона, найденный в логе.
+command="/opt/happ/bin/happd"
+command_args=""
+command_background="yes"
+pidfile="/run/${RC_SVCNAME}.pid"
+
+# Демон должен запускаться от имени root для управления сетью.
+command_user="root:root"
+
+depend() {
+    need localmount
+    use net
+    after bootmisc
+}
+
+start_pre() {
+    # Убедимся, что каталог для базы данных состояния существует.
+    checkpath --directory --owner root:root --mode 0700 /var/lib/happd
+}
